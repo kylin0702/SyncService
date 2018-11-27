@@ -97,6 +97,14 @@
         private string _stmp4;
         private string _stmp5;
         private string _stmp6;
+        private string _ssrc1;
+        private string _ssrc2;
+        private string _ssrc3;
+        private string _ssrc4;
+        private string _ssrc5;
+        private string _ssrc6;
+        private string _ssrc7;
+        private string _ssrc8;
 
         public int ID
         {
@@ -1206,6 +1214,95 @@
                 this._stmp6 = value;
             }
         }
+        public string sSRC1
+        {
+            get
+            {
+                return this._ssrc1;
+            }
+            set
+            {
+                this._ssrc1 = value;
+            }
+        }
+        public string sSRC2
+        {
+            get
+            {
+                return this._ssrc2;
+            }
+            set
+            {
+                this._ssrc2 = value;
+            }
+        }
+        public string sSRC3
+        {
+            get
+            {
+                return this._ssrc3;
+            }
+            set
+            {
+                this._ssrc3 = value;
+            }
+        }
+        public string sSRC4
+        {
+            get
+            {
+                return this._ssrc4;
+            }
+            set
+            {
+                this._ssrc4 = value;
+            }
+        }
+        public string sSRC5
+        {
+            get
+            {
+                return this._ssrc5;
+            }
+            set
+            {
+                this._ssrc5 = value;
+            }
+        }
+        public string sSRC6
+        {
+            get
+            {
+                return this._ssrc6;
+            }
+            set
+            {
+                this._ssrc6 = value;
+            }
+        }
+        public string sSRC7
+        {
+            get
+            {
+                return this._ssrc7;
+            }
+            set
+            {
+                this._ssrc7 = value;
+            }
+        }
+        public string sSRC8
+        {
+            get
+            {
+                return this._ssrc8;
+            }
+            set
+            {
+                this._ssrc8 = value;
+            }
+        }
+
     }
 }
 

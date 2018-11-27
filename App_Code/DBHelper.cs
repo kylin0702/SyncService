@@ -483,6 +483,46 @@
                 builder2.Append("sTMP6,");
                 builder3.Append("'" + model.sTMP6 + "',");
             }
+            if (model.sSRC1 != null)
+            {
+                builder2.Append("sSRC1,");
+                builder3.Append("'" + model.sSRC1 + "',");
+            }
+            if (model.sSRC2 != null)
+            {
+                builder2.Append("sSRC2,");
+                builder3.Append("'" + model.sSRC2 + "',");
+            }
+            if (model.sSRC3 != null)
+            {
+                builder2.Append("sSRC3,");
+                builder3.Append("'" + model.sSRC3 + "',");
+            }
+            if (model.sSRC4 != null)
+            {
+                builder2.Append("sSRC4,");
+                builder3.Append("'" + model.sSRC4 + "',");
+            }
+            if (model.sSRC5 != null)
+            {
+                builder2.Append("sSRC5,");
+                builder3.Append("'" + model.sSRC5 + "',");
+            }
+            if (model.sSRC6 != null)
+            {
+                builder2.Append("sSRC6,");
+                builder3.Append("'" + model.sSRC6+ "',");
+            }
+            if (model.sSRC7 != null)
+            {
+                builder2.Append("sSRC7,");
+                builder3.Append("'" + model.sSRC7 + "',");
+            }
+            if (model.sSRC8 != null)
+            {
+                builder2.Append("sSRC8,");
+                builder3.Append("'" + model.sSRC8 + "',");
+            }
             builder.Append("insert into EquStatus(");
             builder.Append(builder2.ToString().Remove(builder2.Length - 1));
             builder.Append(")");

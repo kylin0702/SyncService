@@ -14,7 +14,7 @@
         public static decimal LtsTMs = 0M;
         public static string sMSs = "Unknow";
         public static string sNUs = "-1";
-        public static string sERR = "0";
+        public static string sERR = "00";
 
         public void AddAbnotma()
         {
@@ -34,7 +34,8 @@
                     return str;
                 }
             }
-            return "0";
+
+            return "";
         }
 
         public void GetJson(RetValue RetValues)
@@ -242,6 +243,14 @@
                 sTMP4 = this.GetDate("sTMP4"),
                 sTMP5 = this.GetDate("sTMP5"),
                 sTMP6 = this.GetDate("sTMP6"),
+                sSRC1 = this.GetDate("sSRC1"),
+                sSRC2 = this.GetDate("sSRC2"),
+                sSRC3 = this.GetDate("sSRC3"),
+                sSRC4 = this.GetDate("sSRC4"),
+                sSRC5 = this.GetDate("sSRC5"),
+                sSRC6 = this.GetDate("sSRC6"),
+                sSRC7 = this.GetDate("sSRC7"),
+                sSRC8 = this.GetDate("sSRC8"),
             };
         }
 
@@ -501,7 +510,7 @@
 
                     UpAndDown upandown = this.GetPaeg2(values.sNU, values.sMS, values.sTM, num);
 
-                    num = DBHelper.AddUpDown(upandown);//增加上传与下载信息表
+                    //num = DBHelper.AddUpDown(upandown);//增加上传与下载信息表
                 }
                 if (num >= 1)
                 {
@@ -567,7 +576,7 @@
                             LtsTMs = useTime;
                         }
                         DBHelper.GetReMaTime(values.sNU, useTime, values.sMS);//光源编号，使用时间，机器状态
-                        if ((!string.IsNullOrEmpty(sERR))&&sERR!="0")
+                        if ((!string.IsNullOrEmpty(sERR))&&sERR!="00")
                         {
                             this.AddAbnotma();
                         }
