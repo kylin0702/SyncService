@@ -712,17 +712,25 @@
         public static string GetDtCount(string EquNUm)
         {
             string sql = "select ID from Equipment where EquNum='" + EquNUm + "' and EquStatus!='UnActive' ";
-            DataSet dataSet = GetDataSet(sql);
-            if ((dataSet == null) || (dataSet.Tables[0].Rows.Count != 1))//如果光源不在系统里或者光源编号重复
+            DataSet dataSet1 = GetDataSet(sql);
+            if ((dataSet1 == null) || (dataSet1.Tables[0].Rows.Count != 1))//如果光源不在系统里或者光源编号重复
             {
                 return "1";
             }
-            DataSet set2 = GetDataSet("select COUNT(*) Counts from Abnorma where EquID=(" + sql + ") and AbSta='未关闭' and Remark!='客户报告异常'");
-            if (set2.Tables[0].Rows.Count >= 1)
+            else
             {
-                return set2.Tables[0].Rows[0][0].ToString();
+                //如果sERR的本次和上一次不一样，写入异常表
+                DataSet dataSet2 = GetDataSet("select top 2 sERR from Equstatus where sNU='" + EquNUm + "' order by ID desc");
+                if (dataSet2.Tables[0].Rows[0]["sERR"].ToString()== dataSet2.Tables[0].Rows[1]["sERR"].ToString())
+                {
+                    return "1";
+                }
+                else
+                {
+                    return "0";
+                }
             }
-            return "0";//如果光源在系统里并且光源编号未重复，查询该光源异常未关闭并且不是客户标记异常的，查询结果大于等于1，返回
+         
         }
 
         public static string GetHostAddress()
