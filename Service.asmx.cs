@@ -317,15 +317,24 @@
             abnorma.UpdateTime = new DateTime?(DBHelper.GetDate());
             abnorma.AbSta = "未关闭";
             DataSet set = DBHelper.SetClientAndEqu3(" and EquNum='" + sNUs + "'");
+            string phones = "";
             if (set.Tables[0].Rows.Count >= 1)
             {
                 string str = set.Tables[0].Rows[0]["IsSend"].ToString();
                 string str2 = set.Tables[0].Rows[0]["ClientName"].ToString();
                 string engineer = set.Tables[0].Rows[0]["Engineer"].ToString();
                 string str4 = set.Tables[0].Rows[0]["NumBer"].ToString();
-                string str5 = abnorma.MainteDesc;
+                string str5 = abnorma.ProDesc;
                 string what = "您好，影院" + str2 + str4+"自报异常<"+ str5 + ">，请尽快处理！";
-                DBHelper.SendMsg("", what, "", engineer, "2");
+                string sql = "select username from V_Users_Roles where slug='manager'";
+                
+                DataSet manager_ds = DBHelper.GetDataSet(sql);
+                for(int i = 0; i < manager_ds.Tables[0].Rows.Count; i++)
+                {
+                    phones = phones + manager_ds.Tables[0].Rows[i]["username"].ToString()+",";
+                }
+                DBHelper.SendMsg("", what, "", phones.TrimEnd(','), "2");
+
             }
             return abnorma;
         }
@@ -469,7 +478,7 @@
                         DBHelper.UpEquIsSend(sNUs, "S");
                     }
                 }
-                if (((str == "Z") && (num <= 200M)) && ((num >= 100M) && (sMSs != "UnActive")))
+                if (((str == "Z") && (num <= 200M)) && ((num > 100M) && (sMSs != "UnActive")))
                 {
                     //充值到100-200之间设置为X
                     DBHelper.UpEquIsSend(sNUs, "X");

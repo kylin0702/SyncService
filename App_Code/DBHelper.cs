@@ -868,7 +868,8 @@
                             str10 = "RemainTime=(RemainTime+Precharge),GiftTime=(GiftTime+PreGift)";//既有充值也有赠送
                         }
                     }
-                    str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N', IsDelay='2' where EquNum='" + EquNUm + "' and RemainTime is not null";
+                    //str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N', IsDelay='2' where EquNum='" + EquNUm + "' and RemainTime is not null";
+                    str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N' where EquNum='" + EquNUm + "' and RemainTime is not null";//by wyb 2018-12-29 在管理系统直接更新IsDelay值
                     int num4 = 0;
                     if (GetIsEnabled(EquNUm) == "Y")
                     {
@@ -886,7 +887,7 @@
                             Rest = "成功",
                             Sta = "Recharge"
                         };
-                        AddUpDown(model);
+                        //AddUpDown(model);
                     }
                 }
             }
@@ -1061,7 +1062,7 @@
             {
                 try
                 {
-                    GetContentFromUrll(" http://www.mxtong.net.cn/GateWay/Services.asmx/DirectSend?UserID=999595&Account=admin&Password=FW9NQ9&Phones=" + str + ";&Content=" + str2 + "&SendTime=&SendType=1&PostFixNumber=");
+                    GetContentFromUrll(" http://61.143.63.169:8080/Services.asmx/DirectSend?UserID=999595&Account=admin&Password=FW9NQ9&Phones=" + str + ";&Content=" + str2 + "&SendTime=&SendType=1&PostFixNumber=");
                 }
                 catch
                 {
@@ -1081,7 +1082,7 @@
 
         public static int UpSets(string EquNum)
         {
-            UpAndDown model = new UpAndDown {
+            /*UpAndDown model = new UpAndDown {
                 EquStaID = new int?(GetAddID()),
                 EquNum = EquNum,
                 IpAds = GetHostAddress(),
@@ -1091,7 +1092,7 @@
                 Rest = "成功",
                 Sta = "Settlement"
             };
-            AddUpDown(model);
+            AddUpDown(model);*/
             return ExecuteNonQuery("update Equipment set IsPre='N',Precharge='0',PreGift='0',GiftTime='0',RemainTime='0'  WHERE  EquNum='" + EquNum + "'");
         }
 
