@@ -775,7 +775,7 @@
             return 0M;
         }
 
-        public static bool GetReMaTime(string EquNUm, decimal UseTime, string sMSs)
+        public static bool GetReMaTime(string EquNUm, decimal UseTime, string sMSs,string sTM)
         {
             if (!IsEuqNum(EquNUm))//EquNUm 光源编号，UseTime 使用时间，sMSs 机器状态
             {
@@ -846,10 +846,11 @@
                             str8 = "0";
                             break;
                     }
-                    ExecuteNonQuery("update Equipment set IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
+                    ExecuteNonQuery("update Equipment set RemainTime='"+ sTM + "',IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
                     str2 = "";
                 }
-                if (((str7 == "Y") || (str7 == "G")) || (str7 == "F"))
+                // if (((str7 == "Y") || (str7 == "G")) || (str7 == "F"))
+                if (str7 == "Y"&&str8=="0")   //by wyb 只用Y表示充值,str8为delay
                 {
                     string str10 = "RemainTime=RemainTime";
                     string str12 = str7;
@@ -869,7 +870,7 @@
                         }
                     }
                     //str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N', IsDelay='2' where EquNum='" + EquNUm + "' and RemainTime is not null";
-                    str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N' where EquNum='" + EquNUm + "' and RemainTime is not null";//by wyb 2018-12-29 在管理系统直接更新IsDelay值
+                    str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N',IsSend='0,0,0,0' where EquNum='" + EquNUm + "' and RemainTime is not null";//by wyb 2018-12-29 在管理系统直接更新IsDelay值
                     int num4 = 0;
                     if (GetIsEnabled(EquNUm) == "Y")
                     {

@@ -320,7 +320,6 @@
             string phones = "";
             if (set.Tables[0].Rows.Count >= 1)
             {
-                string str = set.Tables[0].Rows[0]["IsSend"].ToString();
                 string str2 = set.Tables[0].Rows[0]["ClientName"].ToString();
                 string engineer = set.Tables[0].Rows[0]["Engineer"].ToString();
                 string str4 = set.Tables[0].Rows[0]["NumBer"].ToString();
@@ -406,7 +405,7 @@
             return str;
         }
 
-        public static void IsSend()
+        public static void IsSend(string sTM)
         {
             DataSet set = DBHelper.SetClientAndEqu3(" and EquNum='" + sNUs + "'");
             if (set.Tables[0].Rows.Count >= 1)
@@ -421,8 +420,9 @@
                 decimal num = Convert.ToDecimal(str5);
                 string str6 = str4 + "剩余时长仅有：" + str5 + "小时，";
                 string what = "您好，您的影院" + str2 + str6 + "为避免影响您的使用，请尽快充值！";
+                string[] ss=str.Split(',');//0,0,0,0分别代表500小时，200小时，100小时发送短信开关,代理发送开关,每当有充值设置为0，0，0，0
                 //小于500大于200发送给客户、销售或代理商
-                if (((str == "N") && (num <= 500M)) && ((num > 200M) && (sMSs != "UnActive")))
+                if (((ss[0] == "0") && (num <= 500M)) && ((num > 200M) && (sMSs != "UnActive")))
                 {
                     DBHelper.SendMsg("", what, "", phone, "2");
                     if (!string.IsNullOrEmpty(seller))
@@ -433,10 +433,11 @@
                     {
                         DBHelper.SendMsg("", what, "", agent, "2");
                     }
-                    DBHelper.UpEquIsSend(sNUs, "X");
+                    ss[0] = "1";
+                    DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
                 }
                 //小于200大于100发送给客户、销售或代理商
-                if (((str == "X") && (num <= 200M)) && ((num >= 100M) && (sMSs != "UnActive")))
+                if (((ss[1] == "0") && (num <= 200M)) && ((num >= 100M) && (sMSs != "UnActive")))
                 {
                     DBHelper.SendMsg("", what, "", phone, "2");
                     if (!string.IsNullOrEmpty(seller))
@@ -447,18 +448,20 @@
                     {
                         DBHelper.SendMsg("", what, "", agent, "2");
                     }
-                    DBHelper.UpEquIsSend(sNUs, "Y");
+                    ss[1] = "1";
+                    DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
                 }
                 //小于100发送给客户
-                if (((str == "Y") && (num <= 100M)) && (sMSs != "UnActive"))
+                if (((ss[2] == "0") && (num <= 100M)) && (sMSs != "UnActive"))
                 {
      
                     DBHelper.SendMsg("", what, "", phone, "2");
-  
-                    DBHelper.UpEquIsSend(sNUs, "S");
+                    ss[2] = "1";
+                    DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
+
                 }
                 //小于100发送给销售或代理
-                if (((str == "S") && (num <= 100M)) && (sMSs != "UnActive"))
+                if (((ss[3] == "0") && (num <= 100M)) && (sMSs != "UnActive"))
                 {
                     if (!string.IsNullOrEmpty(seller))
                     {
@@ -468,25 +471,17 @@
                     {
                         DBHelper.SendMsg("", what, "", agent, "2");
                     }
-                    DBHelper.UpEquIsSend(sNUs, "Z");
+                    ss[3] = "1";
+                    DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
                 }
-                if ((str == "Z")  && (sMSs != "UnActive"))
+                if (((ss[3] == "1") && (num <= 100M)) && (sMSs != "UnActive"))
                 {
-                    //每天15：30设置记为S,目的是每天发送给销售或代理商
+                    //每天15：30设置记为0,目的是每天发送给销售或代理商
                     if (DateTime.Now.Hour == 15 && DateTime.Now.Minute == 30)
                     {
-                        DBHelper.UpEquIsSend(sNUs, "S");
+                        ss[3] = "0";
+                        DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
                     }
-                }
-                if (((str == "Z") && (num <= 200M)) && ((num > 100M) && (sMSs != "UnActive")))
-                {
-                    //充值到100-200之间设置为X
-                    DBHelper.UpEquIsSend(sNUs, "X");
-                }
-                if (((str == "Z") && (num>200M)) && (sMSs != "UnActive"))
-                {
-                    //充值到200以上设置为N
-                    DBHelper.UpEquIsSend(sNUs, "N");
                 }
 
             }
@@ -584,7 +579,7 @@
                             }
                             LtsTMs = useTime;
                         }
-                        DBHelper.GetReMaTime(values.sNU, useTime, values.sMS);//光源编号，使用时间，机器状态
+                        DBHelper.GetReMaTime(values.sNU, useTime, values.sMS,values.sTM);//光源编号，使用时间，机器状态
                         if ((!string.IsNullOrEmpty(sERR))&&sERR!="00")
                         {
                             this.AddAbnotma();
@@ -610,7 +605,7 @@
                 retValues.ServerTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
                 retValues.LeftTime = 0M;
             }
-            IsSend();
+            IsSend(sTM);
             this.GetJson(retValues);      
         }
     }
