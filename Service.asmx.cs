@@ -402,13 +402,13 @@
 
         public static string IsActive(string equnum)
         {
-            if (DBHelper.IsDelay(equnum) == "0")
+            if (DBHelper.IsDelay(equnum) == "1")
             {
                 return "Recharge";
             }
             else
             {
-                return "Noraml";
+                return "Normal";
             }
             
         }
@@ -424,9 +424,9 @@
                 string agent= set.Tables[0].Rows[0]["Agent"].ToString();
                 string seller = set.Tables[0].Rows[0]["Seller"].ToString();
                 string str4 = set.Tables[0].Rows[0]["NumBer"].ToString();
-                string str5 = set.Tables[0].Rows[0]["RemainTime"].ToString();
-                decimal num = Convert.ToDecimal(str5);
-                string str6 = str4 + "剩余时长仅有：" + str5 + "小时，";
+                //string str5 = set.Tables[0].Rows[0]["RemainTime"].ToString();
+                decimal num = Convert.ToDecimal(sTM);
+                string str6 = str4 + "剩余时长仅有：" + sTM + "小时，";
                 string what = "您好，您的影院" + str2 + str6 + "为避免影响您的使用，请尽快充值！";
                 string[] ss=str.Split(',');//0,0,0,0分别代表500小时，200小时，100小时发送短信开关,代理发送开关,每当有充值设置为0，0，0，0
                 //小于500大于200发送给客户、销售或代理商
