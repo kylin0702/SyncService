@@ -400,9 +400,17 @@
             return "Hello World";
         }
 
-        public static string IsActive(string str)
+        public static string IsActive(string equnum)
         {
-            return str;
+            if (DBHelper.IsDelay(equnum) == "0")
+            {
+                return "Recharge";
+            }
+            else
+            {
+                return "Noraml";
+            }
+            
         }
 
         public static void IsSend(string sTM)
@@ -526,15 +534,15 @@
                         switch (DBHelper.IsPrest(values.sNU))
                         {
                             case "Y":
-                                retValues.Operating = IsActive("Recharge");
+                                retValues.Operating = IsActive(equNum);
                                 break;
 
                             case "G":
-                                retValues.Operating = IsActive("Recharge");
+                                retValues.Operating = IsActive(equNum);
                                 break;
 
                             case "F":
-                                retValues.Operating = IsActive("Recharge");
+                                retValues.Operating = IsActive(equNum);
                                 break;
 
                             case "S":

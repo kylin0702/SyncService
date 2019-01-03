@@ -846,7 +846,17 @@
                             str8 = "0";
                             break;
                     }
-                    ExecuteNonQuery("update Equipment set RemainTime='"+ sTM + "',IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
+                    //如果数据库时长>=光源时长，数据库时长=光源时长
+                    if (num2 >=decimal.Parse(sTM))
+                    {
+                        ExecuteNonQuery("update Equipment set RemainTime='" + sTM + "',IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
+                    }
+                    //如果数据库时长《=光源时长，不操作，delay值减1
+                    else
+                    {
+                        ExecuteNonQuery("update Equipment set IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
+                    }
+                    
                     str2 = "";
                 }
                 // if (((str7 == "Y") || (str7 == "G")) || (str7 == "F"))
@@ -870,7 +880,21 @@
                         }
                     }
                     //str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N', IsDelay='2' where EquNum='" + EquNUm + "' and RemainTime is not null";
-                    str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N',IsSend='0,0,0,0' where EquNum='" + EquNUm + "' and RemainTime is not null";//by wyb 2018-12-29 在管理系统直接更新IsDelay值
+                    string isend_val = "";//余额不足发送短信值 
+                    if(int.Parse(sTM) >=200)
+                    {
+                        isend_val = "0,0,0,0";
+
+                    }
+                    else if (int.Parse(sTM) < 200 & int.Parse(sTM) >= 100)
+                    {
+                        isend_val = "1,0,0,0";
+                    }
+                    else
+                    {
+                        isend_val = "1,1,0,0";
+                    }
+                    str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N',IsSend='"+ isend_val + "' where EquNum='" + EquNUm + "' and RemainTime is not null";//by wyb 2018-12-29 在管理系统直接更新IsDelay值
                     int num4 = 0;
                     if (GetIsEnabled(EquNUm) == "Y")
                     {
