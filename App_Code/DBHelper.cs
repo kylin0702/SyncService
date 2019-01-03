@@ -846,16 +846,18 @@
                             str8 = "0";
                             break;
                     }
-                    //如果数据库时长>=光源时长，数据库时长=光源时长
+                    ExecuteNonQuery("update Equipment set  IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
+                    /*如果数据库时长>=光源时长，数据库时长=光源时长
                     if (num2 >=decimal.Parse(sTM))
                     {
-                        ExecuteNonQuery("update Equipment set RemainTime='" + sTM + "',IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
+                        ExecuteNonQuery("update Equipment set RemainTime=RemainTime-" + UseTime + ",IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
                     }
                     //如果数据库时长《=光源时长，不操作，delay值减1
                     else
                     {
-                        ExecuteNonQuery("update Equipment set IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
-                    }
+
+                        ExecuteNonQuery("update Equipment set  IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
+                    }*/
                     
                     str2 = "";
                 }
