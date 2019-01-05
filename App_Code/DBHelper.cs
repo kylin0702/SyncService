@@ -801,7 +801,7 @@
                 {
                     str2 = string.Concat(new object[] { "update Equipment set RemainTime=RemainTime-", UseTime, " where EquNum='", EquNUm, "'" });
                 }
-                else if (UseTime > num)//如果使用时长大于赠送时长，剩余时长=充值时长-（使用时长-赠送时长）
+               /* else if (UseTime > num)//如果使用时长大于赠送时长，剩余时长=充值时长-（使用时长-赠送时长）
                 {
                     decimal num3 = UseTime - num;
                     str2 = string.Concat(new object[] { "update Equipment set RemainTime=RemainTime-", num3, ",GiftTime=0 where EquNum='", EquNUm, "'" });
@@ -809,7 +809,7 @@
                 else//否则赠送时长=赠送时长-使用时长
                 {
                     str2 = string.Concat(new object[] { "update Equipment set GiftTime=GiftTime-", UseTime, " where EquNum='", EquNUm, "'" });
-                }
+                }*/
                 if (UseTime > num2)//如果使用时长大于剩余时长，不执行操作
                 {
                     str2 = "";
@@ -832,6 +832,7 @@
                     switch (str8)
                     {
                         case "2"://2次（充值赠送操作）
+                           
                             str8 = "1";
                             break;
 
@@ -846,31 +847,28 @@
                             str8 = "0";
                             break;
                     }
+                
                     ExecuteNonQuery("update Equipment set  IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
-                    /*如果数据库时长>=光源时长，数据库时长=光源时长
-                    if (num2 >=decimal.Parse(sTM))
-                    {
-                        ExecuteNonQuery("update Equipment set RemainTime=RemainTime-" + UseTime + ",IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
-                    }
-                    //如果数据库时长《=光源时长，不操作，delay值减1
-                    else
-                    {
 
-                        ExecuteNonQuery("update Equipment set  IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
-                    }*/
-                    
                     str2 = "";
                 }
                 // if (((str7 == "Y") || (str7 == "G")) || (str7 == "F"))
                 if (str7 == "Y"&&str8=="0")   //by wyb 只用Y表示充值,str8为delay
                 {
+                    
                     string str10 = "RemainTime=RemainTime";
+                    
                     string str12 = str7;
                     if (str12 != null)
                     {
                         if (str12 == "Y")
-                        {
+                        {     
                             str10 = "RemainTime=(RemainTime+Precharge)";// Y 充值操作
+                            //如果数据库时长>=光源时长
+                            if (num2 > decimal.Parse(sTM))
+                            {
+                                str10 = "RemainTime=Precharge+" + sTM;
+                            }
                         }
                         else if (str12 == "G")
                         {
@@ -883,18 +881,23 @@
                     }
                     //str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N', IsDelay='2' where EquNum='" + EquNUm + "' and RemainTime is not null";
                     string isend_val = "";//余额不足发送短信值 
-                    if(int.Parse(sTM) >=200)
+                    if (int.Parse(sTM) >= 500)
                     {
                         isend_val = "0,0,0,0";
 
                     }
-                    else if (int.Parse(sTM) < 200 & int.Parse(sTM) >= 100)
+                    else if (int.Parse(sTM) < 500 & int.Parse(sTM) >= 200)
                     {
                         isend_val = "1,0,0,0";
+
+                    }
+                    else if (int.Parse(sTM) < 200 & int.Parse(sTM) >= 100)
+                    {
+                        isend_val = "1,1,0,0";
                     }
                     else
                     {
-                        isend_val = "1,1,0,0";
+                        isend_val = "1,1,1,1";
                     }
                     str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N',IsSend='"+ isend_val + "' where EquNum='" + EquNUm + "' and RemainTime is not null";//by wyb 2018-12-29 在管理系统直接更新IsDelay值
                     int num4 = 0;

@@ -613,7 +613,10 @@
                 retValues.ServerTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
                 retValues.LeftTime = 0M;
             }
-            IsSend(sTM);
+            if (DBHelper.IsDelay(values.sNU)=="0"&&retValues.Operating=="Normal")
+            {
+                IsSend(sTM);
+            }
             this.GetJson(retValues);      
         }
     }
