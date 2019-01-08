@@ -591,6 +591,10 @@
                             LtsTMs = useTime;
                         }
                         DBHelper.GetReMaTime(values.sNU, useTime, values.sMS,values.sTM);//光源编号，使用时间，机器状态
+                        if (DBHelper.IsDelay(values.sNU) == "0" && retValues.Operating == "Normal")
+                        {
+                            IsSend(values.sTM);
+                        }
                         if ((!string.IsNullOrEmpty(sERR))&&sERR!="00")
                         {
                             this.AddAbnotma();
@@ -616,10 +620,7 @@
                 retValues.ServerTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
                 retValues.LeftTime = 0M;
             }
-            if (DBHelper.IsDelay(values.sNU)=="0"&&retValues.Operating=="Normal")
-            {
-                IsSend(values.sTM);
-            }
+           
             this.GetJson(retValues);      
         }
     }
