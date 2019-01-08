@@ -801,10 +801,10 @@
                 {
                     str2 = string.Concat(new object[] { "update Equipment set RemainTime=RemainTime-", UseTime, " where EquNum='", EquNUm, "'" });
                 }
-               /* else if (UseTime > num)//如果使用时长大于赠送时长，剩余时长=充值时长-（使用时长-赠送时长）
+                /*else if (UseTime > num)//如果使用时长大于赠送时长，剩余时长=充值时长-（使用时长-赠送时长）
                 {
                     decimal num3 = UseTime - num;
-                    str2 = string.Concat(new object[] { "update Equipment set RemainTime=RemainTime-", num3, ",GiftTime=0 where EquNum='", EquNUm, "'" });
+                    str2 = string.Concat(new object[] { "update Equipment  mainTime=RemainTime-", num3, ",GiftTime=0 where EquNum='", EquNUm, "'" });
                 }
                 else//否则赠送时长=赠送时长-使用时长
                 {
@@ -852,23 +852,25 @@
 
                     str2 = "";
                 }
-                // if (((str7 == "Y") || (str7 == "G")) || (str7 == "F"))
-                if (str7 == "Y"&&str8=="0")   //by wyb 只用Y表示充值,str8为delay
+                 if (((str7 == "Y") || (str7 == "G")) || (str7 == "F"))
+                //if (str7 == "Y"&&str8=="0")   //by wyb 只用Y表示充值,str8为delay
                 {
-                    
-                    string str10 = "RemainTime=RemainTime";
-                    
+                   
+                    string str10 = "RemainTime=RemainTime";       
                     string str12 = str7;
                     if (str12 != null)
                     {
                         if (str12 == "Y")
-                        {     
-                            str10 = "RemainTime=(RemainTime+Precharge)";// Y 充值操作
-                            //如果数据库时长>=光源时长
-                            if (num2 > decimal.Parse(sTM))
-                            {
-                                str10 = "RemainTime=Precharge+" + sTM;
+                        {
+                            if (GetReMaTime(EquNUm) >= decimal.Parse(sTM)){
+                                str10 = "RemainTime=("+ sTM + "+Precharge)";// Y 充值操作
+
                             }
+                            else
+                            {
+                                str10 = "RemainTime=(RemainTime+Precharge)";// Y 充值操作
+                            }
+                          
                         }
                         else if (str12 == "G")
                         {
@@ -880,44 +882,34 @@
                         }
                     }
                     //str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N', IsDelay='2' where EquNum='" + EquNUm + "' and RemainTime is not null";
-                    string isend_val = "";//余额不足发送短信值 
-                    if (int.Parse(sTM) >= 500)
-                    {
-                        isend_val = "0,0,0,0";
-
-                    }
-                    else if (int.Parse(sTM) < 500 & int.Parse(sTM) >= 200)
-                    {
-                        isend_val = "1,0,0,0";
-
-                    }
-                    else if (int.Parse(sTM) < 200 & int.Parse(sTM) >= 100)
-                    {
-                        isend_val = "1,1,0,0";
-                    }
-                    else
-                    {
-                        isend_val = "1,1,1,1";
-                    }
-                    str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N',IsSend='"+ isend_val + "' where EquNum='" + EquNUm + "' and RemainTime is not null";//by wyb 2018-12-29 在管理系统直接更新IsDelay值
+                   
+                    str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N' where EquNum='" + EquNUm + "' and RemainTime is not null";//by wyb 2018-12-29 在管理系统直接更新IsDelay值
                     int num4 = 0;
                     if (GetIsEnabled(EquNUm) == "Y")
                     {
                         num4 = ExecuteNonQuery(str4);
-                    }
-                    if (num4 >= 1)
-                    {
-                        UpAndDown model = new UpAndDown {
-                            EquStaID = new int?(GetAddID()),
-                            EquNum = EquNUm,
-                            IpAds = GetHostAddress(),
-                            TheTime = 0,
-                            UpTime = new decimal?(GetReMaTime(EquNUm)),
-                            Date = new DateTime?(GetDate()),
-                            Rest = "成功",
-                            Sta = "Recharge"
-                        };
-                        //AddUpDown(model);
+                        decimal RemainTime_Updated = GetReMaTime(EquNUm);
+                        string isend_val = "";//余额不足发送短信值 
+                        if (RemainTime_Updated >= 500)
+                        {
+                            isend_val = "0,0,0,0";
+
+                        }
+                        else if (RemainTime_Updated < 500 & RemainTime_Updated >= 200)
+                        {
+                            isend_val = "1,0,0,0";
+
+                        }
+                        else if (RemainTime_Updated < 200 & RemainTime_Updated >= 100)
+                        {
+                            isend_val = "1,1,0,0";
+                        }
+                        else
+                        {
+                            isend_val = "1,1,1,1";
+                        }
+                        //更新短信标志
+                        ExecuteNonQuery("update Equipment Set IsSend='" + isend_val + "' where EquNum='" + EquNUm + "' and RemainTime is not null");
                     }
                 }
             }
