@@ -432,7 +432,7 @@
                 //小于500大于200发送给客户、销售或代理商
                 if (((ss[0] == "0") && (num <= 500M)) && ((num > 200M) && (sMSs != "UnActive")))
                 {
-                    /*DBHelper.SendMsg("", what, "", phone, "2");
+                    DBHelper.SendMsg("", what, "", phone, "2");
                     if (!string.IsNullOrEmpty(seller))
                     {
                         DBHelper.SendMsg("", what, "", seller, "2");
@@ -440,7 +440,7 @@
                     if (!string.IsNullOrEmpty(agent))
                     {
                         DBHelper.SendMsg("", what, "", agent, "2");
-                    }*/
+                    }
                     DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", phone, what, sTM, str5,sNUs));
                     ss[0] = "1";
                     DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
@@ -448,7 +448,7 @@
                 //小于200大于100发送给客户、销售或代理商
                 if (((ss[1] == "0") && (num <= 200M)) && ((num >= 100M) && (sMSs != "UnActive")))
                 {
-                    /*DBHelper.SendMsg("", what, "", phone, "2");
+                    DBHelper.SendMsg("", what, "", phone, "2");
                     if (!string.IsNullOrEmpty(seller))
                     {
                         DBHelper.SendMsg("", what, "", seller, "2");
@@ -456,7 +456,7 @@
                     if (!string.IsNullOrEmpty(agent))
                     {
                         DBHelper.SendMsg("", what, "", agent, "2");
-                    }*/
+                    }
                     DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", phone, what, sTM, str5, sNUs));
                     ss[1] = "1";
                     DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
@@ -465,7 +465,7 @@
                 if (((ss[2] == "0") && (num <= 100M)) && (sMSs != "UnActive"))
                 {
 
-                    //DBHelper.SendMsg("", what, "", phone, "2");
+                    DBHelper.SendMsg("", what, "", phone, "2");
                     ss[2] = "1";
                     DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
 
@@ -473,14 +473,14 @@
                 //小于100发送给销售或代理
                 if (((ss[3] == "0") && (num <= 100M)) && (sMSs != "UnActive"))
                 {
-                    /*if (!string.IsNullOrEmpty(seller))
+                    if (!string.IsNullOrEmpty(seller))
                     {
                         DBHelper.SendMsg("", what, "", seller, "2");
                     }
                     if (!string.IsNullOrEmpty(agent))
                     {
                         DBHelper.SendMsg("", what, "", agent, "2");
-                    }*/
+                    }
                     DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", phone, what, sTM, str5, sNUs));
                     ss[3] = "1";
                     DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
@@ -488,7 +488,7 @@
                 if (((ss[3] == "1") && (num <= 100M)) && (sMSs != "UnActive"))
                 {
                     //每天15：30设置记为0,目的是每天发送给销售或代理商
-                    if (DateTime.Now.Hour == 4 && DateTime.Now.Minute == 05)
+                    if (DateTime.Now.Hour == 9 && DateTime.Now.Minute == 05)
                     {
                         ss[3] = "0";
                         DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
