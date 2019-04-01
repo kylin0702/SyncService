@@ -19,7 +19,6 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
-    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -65,7 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\Abnorma.cs" />
-    <Compile Include="App_Code\UpAndDown.cs" />
     <Compile Include="App_Code\Class1.cs" />
     <Compile Include="App_Code\Class2.cs" />
     <Compile Include="App_Code\EquStatus.cs" />
@@ -81,7 +79,6 @@
     <None Include="Properties\PublishProfiles\web.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
-      <SubType>Designer</SubType>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>

@@ -6,22 +6,144 @@
     using System.Data;
     using System.Web.Script.Serialization;
     using System.Web.Services;
-   
 
-    [ToolboxItem(false), WebService(Namespace = "http://tempuri.org/"), WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-    public class WebService1 : WebService
+    [ToolboxItem(false), WebService(Namespace = "http://intela.com.cn"), WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    public class WebService : System.Web.Services.WebService
     {
-        public static decimal LtsTMs = 0M;
-        public static string sMSs = "Unknow";
-        public static string sNUs = "-1";
-        public static string sERR = "00";
-        public static string sTM = "0";
+        private string _clientName;//客户名
+        private decimal _clientTime;//客户端时长
+        private string _equNum;//光源编号
+        private string _number;//厅号
+        private string _isSend;//是否发送短信
+        private string _clientPhone;//客户手机号码
+        private string _agent;//代理手机号码
+        private string _seller;//销售手机号码
+        private string _engineer;//工程师手机号码
+        private string _isDelay;
+        private string _equID;
+        private string _clientID;
+        private decimal _reMaTime;
+        private decimal _reChargeTime;
+        private string _isReCharge;
+        private string _sMS;
+        private string _sERR;
+        private string _proDesc;
+        public static string isSendToClient = System.Web.Configuration.WebConfigurationManager.AppSettings["sendtoclient"];
+        public static string isSendToAgent = System.Web.Configuration.WebConfigurationManager.AppSettings["sendtoagent"];
+        public static string isSendToSeller = System.Web.Configuration.WebConfigurationManager.AppSettings["sendtoseller"];
 
-        public void AddAbnotma()
+        public string ProDesc
         {
-            if (DBHelper.GetDtCount(sNUs) == "0")
+            get { return _proDesc; }
+            set { _proDesc = value; }
+        }
+
+        public string sERR
+        {
+            get { return _sERR; }
+            set { _sERR = value; }
+        }
+
+        public string sMS
+        {
+            get { return _sMS; }
+            set { _sMS = value; }
+        }
+
+        public string IsReCharge
+        {
+            get { return _isReCharge; }
+            set { _isReCharge = value; }
+        }
+
+        public decimal ReChargeTime
+        {
+            get { return _reChargeTime; }
+            set { _reChargeTime = value; }
+        }
+
+        public decimal ReMaTime
+        {
+            get { return _reMaTime; }
+            set { _reMaTime = value; }
+        }
+
+        public string ClientID
+        {
+            get { return _clientID; }
+            set { _clientID = value; }
+        }
+
+        public string EquID
+        {
+            get { return _equID; }
+            set { _equID = value; }
+        }
+
+        public string IsDelay
+        {
+            get { return _isDelay; }
+            set { _isDelay = value; }
+        }
+
+        public string Engineer
+        {
+            get { return _engineer; }
+            set { _engineer = value; }
+        }
+
+        public string Seller
+        {
+        get { return _seller; }
+        set { _seller = value; }
+        }
+
+        public string Agent
+        {
+            get { return _agent; }
+            set { _agent = value; }
+        }
+
+        public string ClientPhone
+        {
+            get { return _clientPhone; }
+            set { _clientPhone = value; }
+        }
+
+        public string IsSend
+        {
+            get { return _isSend; }
+            set { _isSend = value; }
+        }
+
+        public string Number
+        {
+            get { return _number; }
+            set { _number = value; }
+        }
+
+        public string EquNum
+        {
+            get { return _equNum; }
+            set { _equNum = value; }
+        }
+
+        public decimal ClientTime
+        {
+            get { return _clientTime; }
+            set { _clientTime = value; }
+        }
+
+        public string ClientName
+        {
+            get { return _clientName; }
+            set { _clientName = value; }
+        }
+        public void AddAbnotma(string ClientID, string EquID, string ProDesc)
+        {
+            if (DBHelper.GetDtCount(EquID) != ProDesc)
             {
-                DBHelper.AddAbnorma(this.GetPageAbt());
+                DBHelper.AddAbnorma(this.GetPageAbt(ClientID, EquID, ProDesc));
             }
         }
 
@@ -35,8 +157,7 @@
                     return str;
                 }
             }
-
-            return "";
+            return "0";
         }
 
         public void GetJson(RetValue RetValues)
@@ -48,7 +169,6 @@
             base.Context.Response.Write(s);
             base.Context.Response.End();
         }
-
         public void GetJson(string str, int st)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
@@ -99,51 +219,6 @@
             base.Context.Response.ContentType = "text/json";
             base.Context.Response.Write(s);
             base.Context.Response.End();
-        }
-        /// <summary>
-        /// //增加上传与下载信息表以及系统时长扣除
-        /// </summary>
-        /// <returns></returns>
-        public UpAndDown GetPaeg2(string snu,string sms,string stm,int sid)
-        {
-          
-            decimal num = Convert.ToDecimal(stm);//光源上传的剩余时长
-            decimal num2 = 0M;
-            decimal reMaTime = DBHelper.GetReMaTime(snu);//数据库中充值+赠送的时长
-            if (num < reMaTime)
-            {
-                num2 = reMaTime - num;
-                if (DBHelper.IsSets(snu))//充值的话，使用时长为0
-                {
-                    num2 = 0M;
-                }
-                if (DBHelper.IsDelay(snu) != "0")//需要延时充值，使用时长为0
-                {
-                    num2 = 0M;
-                }
-                if (sms == "UnActive")//未激活，使用时长为0
-                {
-                    num2 = 0M;
-                }
-                LtsTMs = num2;
-            }
-            /*else if (((num > reMaTime) && !DBHelper.IsSets(snu)) && (DBHelper.GetDtCount(snu) == "0"))//如果光源剩余时长大于服务器剩余总时长（充值+赠送） && 光源未充值 && 
-            {
-              
- 
-            }*/
-            return new UpAndDown
-            {
-                EquStaID = sid,
-                EquNum = snu,
-                IpAds = DBHelper.GetHostAddress(),
-                TheTime = new decimal?(num2),
-                UpTime = new decimal?(num),
-                Date = new DateTime?(DBHelper.GetDate()),
-                Rest = "成功",
-                UseAmount = new decimal?(DBHelper.GetUseAmout(snu, num2)),
-                Sta = sms
-            };
         }
 
         public EquStatus GetPage()
@@ -238,106 +313,42 @@
                 sERR = this.GetDate("sERR"),
                 sTMP1 = this.GetDate("sTMP1"),
                 sTMP2 = this.GetDate("sTMP2"),
-                sTMP3= this.GetDate("sTMP3"),
+                sTMP3 = this.GetDate("sTMP3"),
                 sTMP4 = this.GetDate("sTMP4"),
                 sTMP5 = this.GetDate("sTMP5"),
                 sTMP6 = this.GetDate("sTMP6"),
-                sSRC1 = this.GetDate("sSRC1"),
-                sSRC2 = this.GetDate("sSRC2"),
-                sSRC3 = this.GetDate("sSRC3"),
-                sSRC4 = this.GetDate("sSRC4"),
-                sSRC5 = this.GetDate("sSRC5"),
-                sSRC6 = this.GetDate("sSRC6"),
-                sSRC7 = this.GetDate("sSRC7"),
-                sSRC8 = this.GetDate("sSRC8"),
+                sSCR1 = this.GetDate("sSCR1"),
+                sSCR2 = this.GetDate("sSCR2"),
+                sSCR3 = this.GetDate("sSCR3"),
+                sSCR4 = this.GetDate("sSCR4"),
+                sSCR5 = this.GetDate("sSCR5"),
+                sSCR6 = this.GetDate("sSCR6"),
+                sSCR7 = this.GetDate("sSCR7"),
+                sSCR8 = this.GetDate("sSCR8")
             };
         }
 
-        public Abnorma GetPageAbt()
+        public Abnorma GetPageAbt(string ClientID, string EquID, string ProDesc)
         {
             Abnorma abnorma = new Abnorma
             {
                 EquID = 0,
                 ClientID = 0
             };
-            DataSet clientAnID = DBHelper.GetClientAnID(sNUs);
-            if (clientAnID.Tables[0].Rows.Count >= 1)
-            {
-                abnorma.EquID = Convert.ToInt32(clientAnID.Tables[0].Rows[0]["ID"].ToString());
-                abnorma.ClientID = Convert.ToInt32(clientAnID.Tables[0].Rows[0]["ClientID"].ToString());
-            }
-            
-            abnorma.ProDesc = "";
+            abnorma.ClientID = Convert.ToInt32(ClientID);
+            abnorma.EquID = Convert.ToInt32(EquID);
+            abnorma.ProDesc = ProDesc;
             abnorma.Livephotos = 0;
             abnorma.MainteDesc = "";
-            switch (sERR)
-            {
-                case "01":
-                    abnorma.ProDesc = "温度传感器未连接";
-                    break;
-                case "02":
-                    abnorma.ProDesc = "设备温度异常";
-                    break;
-                case "03":
-                    abnorma.ProDesc = "设备温度异常";
-                    break;
-                case "04":
-                    abnorma.ProDesc = "水冷机未连接";
-                    break;
-                case "05":
-                    abnorma.ProDesc = "箱门未关闭";
-                    break;
-                case "06":
-                    abnorma.ProDesc = "驱动配置异常";
-                    break;
-                case "07":
-                    abnorma.ProDesc = "驱动通信异常";
-                    break;
-                case "08":
-                    abnorma.ProDesc = "驱动配置异常";
-                    break;
-                case "09":
-                    abnorma.ProDesc = "红光电流异常";
-                    break;
-                case "10":
-                    abnorma.ProDesc = "绿光电流异常";
-                    break;
-                case "11":
-                    abnorma.ProDesc = "蓝光电流异常";
-                    break;
-                default:
-                    abnorma.ProDesc = "";
-                    break;
-
-            }
             abnorma.Remark = "机器自报异常";
             abnorma.Serious = "否";
             abnorma.Solve = "未解决";
             abnorma.UpdateTime = new DateTime?(DBHelper.GetDate());
             abnorma.AbSta = "未关闭";
-            DataSet set = DBHelper.SetClientAndEqu3(" and EquNum='" + sNUs + "'");
-            string phones = "";
-            if (set.Tables[0].Rows.Count >= 1)
-            {
-                string str2 = set.Tables[0].Rows[0]["ClientName"].ToString();
-                string engineer = set.Tables[0].Rows[0]["Engineer"].ToString();
-                string str4 = set.Tables[0].Rows[0]["NumBer"].ToString();
-                string str5 = abnorma.ProDesc;
-                string what = "您好，影院" + str2 + str4+"自报异常<"+ str5 + ">，请尽快处理！";
-                string sql = "select username from V_Users_Roles where slug='manager'";
-                
-                DataSet manager_ds = DBHelper.GetDataSet(sql);
-                for(int i = 0; i < manager_ds.Tables[0].Rows.Count; i++)
-                {
-                    phones = phones + manager_ds.Tables[0].Rows[i]["username"].ToString()+",";
-                }
-                DBHelper.SendMsg("", what, "", phones.TrimEnd(','), "2");
-
-            }
             return abnorma;
         }
 
-        public Abnorma GetPageAbts(string sNUs ,string num,string debug)
+        public Abnorma GetPageAbts(string sNUs, string num)
         {
             Abnorma abnorma = new Abnorma
             {
@@ -350,7 +361,7 @@
                 abnorma.EquID = Convert.ToInt32(clientAnID.Tables[0].Rows[0]["ID"].ToString());
                 abnorma.ClientID = Convert.ToInt32(clientAnID.Tables[0].Rows[0]["ClientID"].ToString());
             }
-            abnorma.ProDesc = debug;
+            abnorma.ProDesc = "";
             abnorma.Livephotos = 0;
             abnorma.MainteDesc = "";
             abnorma.Remark = "光源剩余时长大于服务器时长(数值：" + num + ")";
@@ -358,271 +369,380 @@
             abnorma.Solve = "未解决";
             abnorma.UpdateTime = new DateTime?(DBHelper.GetDate());
             abnorma.AbSta = "未关闭";
-                return abnorma;
+            return abnorma;
         }
 
-        [WebMethod(Description = "返回字符串3")]
-        public void GetrLess(string str)
-        {
-            if (!string.IsNullOrWhiteSpace(str))
-            {
-                this.GetJson("success", 2);
-            }
-            else
-            {
-                this.GetJson("failure", 2);
-            }
-        }
-
-        [WebMethod(Description = "返回字符串1")]
+        //[WebMethod(Description = "返回字符串3")]
+        //public void GetrLess(string str)
+        //{
+        //    if (!string.IsNullOrWhiteSpace(str))
+        //    {
+        //        this.GetJson("success", 2);
+        //    }
+        //    else
+        //    {
+        //        this.GetJson("failure", 2);
+        //    }
+        //}
+        #region 上传服务
+        [WebMethod(Description = "上传服务")]
         public void GetString()
         {
-            this.UpStaAndTime();
+            UpStaAndTime();
         }
-
-        [WebMethod(Description = "返回字符串2")]
-        public void GetSum(string str)
-        {
-            if (!string.IsNullOrWhiteSpace(str))
-            {
-                this.GetJson("success", 1);
-            }
-            else
-            {
-                this.GetJson("failure", 1);
-            }
-        }
-
-        [WebMethod]
-        public string HelloWorld()
-        {
-            return "Hello World";
-        }
+        #endregion
 
         public static string IsActive(string str)
         {
-            /*if (DBHelper.IsDelay(equnum) == "0")
-            {
-                return "Recharge";
-            }
-            else
-            {
-                return "Normal";
-            }*/
             return str;
-            
         }
-
-        public  void IsSend(string sTM)
+        #region 发送短信
+        public void Send(decimal ClientTime, string ClientName, string EquNum, string Number, string IsSend, string ClientPhone, string Agent, string Seller, string Engineer)
         {
-            DataSet set = DBHelper.SetClientAndEqu3(" and EquNum='" + sNUs + "'");
-            if (set.Tables[0].Rows.Count >= 1)
+            string number = Number + "剩余时长：" + ClientTime + "小时,";
+            string toclient = "您好，您的影院[" + ClientName + "]" + number + "为避免影响您的使用，请及时续费！";
+            string toagent = "您好，您的客户[" + ClientName + "]" + number + "为了客户的正常使用，请提醒客户及时续费!";
+            string toseller = "您好，你的客户[" + ClientName + "]" + number + "为了客户的正常使用，请提醒客户及时续费!";
+            char[] separator = new char[] { ',' };
+            string[] strArray = IsSend.ToString().Split(separator);
+            if ((strArray[2] == "0") && (ClientTime <= 100M))
             {
-                string str = set.Tables[0].Rows[0]["IsSend"].ToString();
-                string str2 = set.Tables[0].Rows[0]["ClientName"].ToString();
-                string phone = set.Tables[0].Rows[0]["Phone"].ToString();
-                string agent= set.Tables[0].Rows[0]["Agent"].ToString();
-                string seller = set.Tables[0].Rows[0]["Seller"].ToString();
-                string str4 = set.Tables[0].Rows[0]["NumBer"].ToString();
-                string str5 = set.Tables[0].Rows[0]["RemainTime"].ToString();
-                decimal num = Convert.ToDecimal(str5);
-                string str6 = str4 + "剩余时长仅有：" + str5 + "小时，";
-                string what = "您好，您的影院" + str2 + str6 + "为避免影响您的使用，请尽快充值！";
-                string[] ss=str.Split(',');//0,0,0,0分别代表500小时，200小时，100小时发送短信开关,代理发送开关,每当有充值设置为0，0，0，0
-                //小于500大于200发送给客户、销售或代理商
-                if (((ss[0] == "0") && (num <= 500M)) && ((num > 200M) && (sMSs != "UnActive")))
+                if(isSendToClient == "yes")
                 {
-                    DBHelper.SendMsg("", what, "", phone, "2");
-                    if (!string.IsNullOrEmpty(seller))
-                    {
-                        DBHelper.SendMsg("", what, "", seller, "2");
-                    }
-                    if (!string.IsNullOrEmpty(agent))
-                    {
-                        DBHelper.SendMsg("", what, "", agent, "2");
-                    }
-                    DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", phone, what, sTM, str5,sNUs));
-                    ss[0] = "1";
-                    DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
+                    DBHelper.SendMsg("", toclient, "", ClientPhone, "2");
                 }
-                //小于200大于100发送给客户、销售或代理商
-                if (((ss[1] == "0") && (num <= 200M)) && ((num >= 100M) && (sMSs != "UnActive")))
+                DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", new object[] { ClientPhone, toclient, ClientTime, ClientTime, EquNum }));
+                if (!string.IsNullOrEmpty(Seller))
                 {
-                    DBHelper.SendMsg("", what, "", phone, "2");
-                    if (!string.IsNullOrEmpty(seller))
+                    if(isSendToSeller == "yes")
                     {
-                        DBHelper.SendMsg("", what, "", seller, "2");
+                        DBHelper.SendMsg("", toseller, "", Seller, "2");
                     }
-                    if (!string.IsNullOrEmpty(agent))
-                    {
-                        DBHelper.SendMsg("", what, "", agent, "2");
-                    }
-                    DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", phone, what, sTM, str5, sNUs));
-                    ss[1] = "1";
-                    DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
+                    DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", new object[] { Seller, toseller, ClientTime, ClientTime, EquNum }));
                 }
-                //小于100发送给客户
-                if (((ss[2] == "0") && (num <= 100M)) && (sMSs != "UnActive"))
+                if (!string.IsNullOrEmpty(Agent))
                 {
+                    if(isSendToAgent == "yes")
+                    {
+                        DBHelper.SendMsg("", toagent, "", Agent, "2");
+                    }
+                    DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", new object[] { Agent, toagent, ClientTime, ClientTime, EquNum }));
+                }
+                strArray[2] = "1";
+                strArray[3] = "1";
+                DBHelper.UpEquIsSend(EquNum, string.Join(",", strArray));
+            }
+            if ((strArray[3] == "0") && (ClientTime <= 100M))
+            {
+                if(isSendToClient == "yes")
+                {
+                    DBHelper.SendMsg("", toclient, "", ClientPhone, "2");
+                }
+                DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", new object[] { ClientPhone, toclient, ClientTime, ClientTime, EquNum }));
+                if (!string.IsNullOrEmpty(Seller))
+                {
+                    if(isSendToSeller == "yes")
+                    {
+                        DBHelper.SendMsg("", toseller, "", Seller, "2");
+                    }
+                    DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", new object[] { Seller, toseller, ClientTime, ClientTime, EquNum }));
+                }
+                if (!string.IsNullOrEmpty(Agent))
+                {
+                    if(isSendToAgent == "yes")
+                    {
+                        DBHelper.SendMsg("", toagent, "", Agent, "2");
+                    }   
+                    DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", new object[] { Agent, toagent, ClientTime, ClientTime, EquNum }));
+                }
+                strArray[3] = "1";
+                DBHelper.UpEquIsSend(EquNum, string.Join(",", strArray));
+            }
+            if ((((strArray[3] == "1") && (ClientTime <= 100M)) && (DateTime.Now.Hour == 9)) && (DateTime.Now.Minute == 5))
+            {
+                strArray[3] = "0";
+                DBHelper.UpEquIsSend(EquNum, string.Join(",", strArray));
+            }
+            if ((strArray[1] == "0") && (ClientTime <= 200M) && (ClientTime > 100M))
+            {
+                if(isSendToClient == "yes")
+                {
+                    DBHelper.SendMsg("", toclient, "", ClientPhone, "2");
+                }
+                DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", new object[] { ClientPhone, toclient, ClientTime, ClientTime, EquNum }));
+                if (!string.IsNullOrEmpty(Seller))
+                {
+                    if(isSendToSeller == "yes")
+                    {
+                        DBHelper.SendMsg("", toseller, "", Seller, "2");
+                    }
+                    DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", new object[] { Seller, toseller, ClientTime, ClientTime, EquNum }));
+                }
+                if (!string.IsNullOrEmpty(Agent))
+                {
+                    if(isSendToAgent == "yes")
+                    {
+                        DBHelper.SendMsg("", toagent, "", Agent, "2");
+                    }
+                    DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", new object[] { Agent, toagent, ClientTime, ClientTime, EquNum }));
+                }
+                strArray[1] = "1";
+                DBHelper.UpEquIsSend(EquNum, string.Join(",", strArray));
+            }
+            if ((strArray[0] == "0") && (ClientTime <= 500M) && (ClientTime > 200M))
+            {
+                if(isSendToClient == "yes")
+                {
+                    DBHelper.SendMsg("", toclient, "", ClientPhone, "2");
+                }
+                DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", new object[] { ClientPhone, toclient, ClientTime, ClientTime, EquNum }));
 
-                    DBHelper.SendMsg("", what, "", phone, "2");
-                    ss[2] = "1";
-                    DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
-
-                }
-                //小于100发送给销售或代理
-                if (((ss[3] == "0") && (num <= 100M)) && (sMSs != "UnActive"))
+                if (!string.IsNullOrEmpty(Seller))
                 {
-                    if (!string.IsNullOrEmpty(seller))
+                    if(isSendToSeller == "yes")
                     {
-                        DBHelper.SendMsg("", what, "", seller, "2");
+                        DBHelper.SendMsg("", toseller, "", Seller, "2");
                     }
-                    if (!string.IsNullOrEmpty(agent))
-                    {
-                        DBHelper.SendMsg("", what, "", agent, "2");
-                    }
-                    DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", phone, what, sTM, str5, sNUs));
-                    ss[3] = "1";
-                    DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
+                    DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", new object[] { Seller, toseller, ClientTime, ClientTime, EquNum }));
                 }
-                if (((ss[3] == "1") && (num <= 100M)) && (sMSs != "UnActive"))
+                if (!string.IsNullOrEmpty(Agent))
                 {
-                    //每天15：30设置记为0,目的是每天发送给销售或代理商
-                    if (DateTime.Now.Hour == 9 && DateTime.Now.Minute == 05)
+                    if(isSendToAgent == "yes")
                     {
-                        ss[3] = "0";
-                        DBHelper.UpEquIsSend(sNUs, String.Join(",", ss));
+                        DBHelper.SendMsg("", toagent, "", Agent, "2");
                     }
+                    DBHelper.ExecuteNonQuery(string.Format("Insert Into ShortMessage (phone, message, smt, remaintime,snu) values('{0}','{1}','{2}','{3}','{4}')", new object[] { Agent, toagent, ClientTime, ClientTime, EquNum }));
                 }
-
+                strArray[0] = "1";
+                DBHelper.UpEquIsSend(EquNum, string.Join(",", strArray));
             }
         }
-
-        public void Reset()
+        #endregion
+        public static void UpStaAndTime()
         {
-            sNUs = "-1";
-            LtsTMs = 0M;
-            sMSs = "Unknow";
-        }
-
-        public void UpStaAndTime()
-        {
-            this.Reset();//重置页面数据
-            EquStatus values = this.GetPage();
-            sNUs= values.sNU;//获取光源编号
-            sMSs = values.sMS;//获取光源状态 
-            sERR = values.sERR;//获取光源错误码
-            sTM= values.sTM;//获取光源时长
-
-            RetValue retValues = new RetValue();//LeftTime Operating ServerTime Status
-            int num = 0;//光源状态
-            if (!string.IsNullOrWhiteSpace(sNUs) && (sNUs!= "0"))
-            {       
-                num = DBHelper.Add(values);//增加机器状态表数据
-              
-                if (num >= 1)//如果状态表数据记录增加成功
-                {
-
-                    UpAndDown upandown = this.GetPaeg2(values.sNU, values.sMS, values.sTM, num);
-
-                    //num = DBHelper.AddUpDown(upandown);//增加上传与下载信息表
-                }
-                if (num >= 1)
-                {
-                    string equNum = values.sNU;
-                    string str3 = values.sMS;
-                    decimal num2 = Convert.ToDecimal(values.sTM);
-                    if (values.sNU == equNum)
-                    {
-                        switch (DBHelper.IsPrest(values.sNU))
-                        {
-                            case "Y":
-                                retValues.Operating = IsActive("Recharge");
-                                break;
-
-                            case "G":
-                                retValues.Operating = IsActive("Recharge");
-                                break;
-
-                            case "F":
-                                retValues.Operating = IsActive("Recharge");
-                                break;
-
-                            case "S":
-                                DBHelper.UpSets(values.sNU);
-                                retValues.Operating = "Settlement";
-                                break;
-
-                            case "N":
-                                retValues.Operating = "Normal";
-                                break;
-
-                            default:
-                                retValues.Operating = "UnKnow";
-                                break;
-                        }
-                        /*
-                        if ((sMSs == "UnActive") && DBHelper.IsBuys(values.sNU))
-                        {
-                            retValues.Operating = "Recharge";
-                        }*/
-                        //by wyb 2018-7-2
-                        if (sMSs == "UnActive")
-                        {
-                            retValues.Operating = "Recharge";
-                        }
-                        decimal useTime = 0M;
-                        decimal reMaTime = DBHelper.GetReMaTime(values.sNU);
-                        if (num2 < reMaTime)
-                        {
-                            useTime = reMaTime - num2;
-                            if (DBHelper.IsSets(values.sNU))
-                            {
-                                useTime = 0M;
-                            }
-                            if (DBHelper.IsDelay(values.sNU) != "0")
-                            {
-                                useTime = 0M;
-                            }
-                            if (str3 == "UnActive")
-                            {
-                                useTime = 0M;
-                            }
-                            LtsTMs = useTime;
-                        }
-                        DBHelper.GetReMaTime(values.sNU, useTime, values.sMS,values.sTM);//光源编号，使用时间，机器状态
-                        if (DBHelper.IsDelay(values.sNU) == "0" && retValues.Operating == "Normal")
-                        {
-                            IsSend(values.sTM);
-                        }
-                        if ((!string.IsNullOrEmpty(sERR))&&sERR!="00")
-                        {
-                            this.AddAbnotma();
-                        }
-                    }
-                }
-            }
-            if ((num >= 1))
+            WebService service = new WebService();//新建webservice对象
+            EquStatus Equstatus = service.GetPage();
+            service.ClientTime = Convert.ToDecimal(Equstatus.sTM);//客户端上传的时长
+            //decimal ClientTime = Convert.ToDecimal(Equstatus.sTM);
+            service.EquNum = Equstatus.sNU;//光源编号
+            //string EquNum = Equstatus.sNU;
+            //string sMS = Equstatus.sMS;//机器状态
+            service.sMS = Equstatus.sMS;
+            //string sERR = Equstatus.sERR;//光源错误代码
+            service.sERR = Equstatus.sERR;
+            RetValue retValues = new RetValue();//LeftTime Operating ServerTime Status          
+            if (!string.IsNullOrWhiteSpace(service.EquNum) && (service.EquNum != "0"))
             {
-                retValues.Status = "success";
-                retValues.LeftTime = DBHelper.GetReMaTime(values.sNU);
-                DBHelper.GetIsEnabled(values.sNU);
-                retValues.ServerTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
-                if (DBHelper.GetIsEnabled(values.sNU) == "N")
+                if (DBHelper.IsLocked(service.EquNum))
                 {
+                    DBHelper.Add(Equstatus);
                     retValues.Operating = "Lock";
+                    retValues.LeftTime = Convert.ToDecimal(service.ClientTime);
+                    retValues.Status = "Success";
+                    retValues.ServerTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                    service.GetJson(retValues);
+                    return;
                 }
+                if (DBHelper.IsEuqNum(service.EquNum))
+                {
+                    DataSet ds = DBHelper.GetEquInfo(service.EquNum);//获取该光源相应信息
+                    service.IsDelay = ds.Tables[0].Rows[0]["IsDelay"].ToString();//充值后的延时操作
+                    service.IsSend = ds.Tables[0].Rows[0]["IsSend"].ToString();//是否已发送短信
+                    service.EquID = ds.Tables[0].Rows[0]["EquID"].ToString();//光源ID
+                    service.Number = ds.Tables[0].Rows[0]["Number"].ToString();//厅号
+                    service.ClientID = ds.Tables[0].Rows[0]["ClientID"].ToString();//客户ID
+                    service.ClientName = ds.Tables[0].Rows[0]["ClientName"].ToString();//客户名
+                    service.ClientPhone = ds.Tables[0].Rows[0]["Phone"].ToString();//客户手机号码
+                    service.Agent = ds.Tables[0].Rows[0]["agent"].ToString();//代理商手机号码
+                    service.Engineer = ds.Tables[0].Rows[0]["engineer"].ToString();//工程师手机号码
+                    service.Seller = ds.Tables[0].Rows[0]["seller"].ToString();//销售人员手机号码
+                    service.ReMaTime = Convert.ToDecimal(ds.Tables[0].Rows[0]["RemainTime"].ToString());//数据库内该光源总剩余时长
+                    service.ReChargeTime = Convert.ToDecimal(ds.Tables[0].Rows[0]["Precharge"].ToString());//要充值的时长
+                    service.IsReCharge = ds.Tables[0].Rows[0]["IsPre"].ToString();//是否需要充值
+                    if (service.sERR != "00" && service.sERR != "0" && !string.IsNullOrEmpty(service.sERR))
+                    {
+                        service.ProDesc = "";
+                        switch (service.sERR)
+                        {
+                            case "01":
+                                service.ProDesc = "温度传感器未连接";
+                                break;
+                            case "02":
+                                service.ProDesc = "设备温度异常";
+                                break;
+                            case "03":
+                                service.ProDesc = "设备温度严重异常";
+                                break;
+                            case "04":
+                                service.ProDesc = "水冷机未连接";
+                                break;
+                            case "05":
+                                service.ProDesc = "光传感器未连接";
+                                break;
+                            case "06":
+                                service.ProDesc = "箱门未关闭";
+                                break;
+                            case "07":
+                                service.ProDesc = "驱动配置异常";
+                                break;
+                            case "08":
+                                service.ProDesc = "驱动通信异常";
+                                break;
+                            case "09":
+                                service.ProDesc = "红光电流异常";
+                                break;
+                            case "10":
+                                service.ProDesc = "绿光电流异常";
+                                break;
+                            case "11":
+                                service.ProDesc = "蓝光电流异常";
+                                break;
+                            default:
+                                break;
+
+                        }
+                        service.AddAbnotma(service.ClientID, service.EquID, service.ProDesc);
+                    }
+                    service.Send(service.ClientTime, service.ClientName, service.EquNum, service.Number, service.IsSend, service.ClientPhone, service.Agent, service.Seller, service.Engineer);
+                    switch (service.IsReCharge)
+                    {
+                        case "Y":
+                            retValues.Operating = IsActive("Recharge");
+                            if (service.ClientTime <= service.ReMaTime)//如果客户端时长小于等于服务器剩余总时长(此为正常情况)
+                            {
+                                retValues.LeftTime = service.ReChargeTime + service.ClientTime;//返回时长为客户端时长+充值时长
+                                retValues.ServerTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                                retValues.Status = IsActive("Success");
+                                DBHelper.UpdateEquTime(service.EquNum, retValues.LeftTime);
+                                Equstatus.sTM = Convert.ToInt32(retValues.LeftTime).ToString();
+                                DBHelper.Add(Equstatus);
+                                DBHelper.ExecuteNonQuery(string.Concat(new string[] { "update Equipment set EquStatus='", service.sMS, "' WHERE EquNum='", service.EquNum, "'" }));
+                                DBHelper.ExecuteNonQuery(string.Concat(new object[] { "update Equipment set ReviewTime='", DBHelper.GetDate(), "' WHERE EquNum='", service.EquNum, "'" }));
+                                if (retValues.LeftTime > 500M)
+                                {
+                                    DBHelper.UpEquIsSend(service.EquNum, "1,1,1,1");
+                                }
+                                else if (retValues.LeftTime <= 500M && retValues.LeftTime > 200M)
+                                {
+                                    DBHelper.UpEquIsSend(service.EquNum, "0,1,1,1");
+                                }
+                                else if (retValues.LeftTime <= 200M && retValues.LeftTime > 100M)
+                                {
+                                    DBHelper.UpEquIsSend(service.EquNum, "1,0,1,1");
+                                }
+                                else
+                                {
+                                    DBHelper.UpEquIsSend(service.EquNum, "1,1,0,0");
+                                }
+
+                                service.GetJson(retValues);
+                                return;
+
+                            }
+                            else//客户端时长大于服务器端时长
+                            {
+                                retValues.LeftTime = service.ReMaTime + service.ReChargeTime;//返回时长为 服务器端剩余总时长+充值时长
+                                retValues.ServerTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                                retValues.Status = IsActive("Success");
+                                DBHelper.UpdateEquTime(service.EquNum, retValues.LeftTime);
+                                Equstatus.sTM = Convert.ToInt32(retValues.LeftTime).ToString();
+                                DBHelper.Add(Equstatus);
+                                DBHelper.ExecuteNonQuery(string.Concat(new string[] { "update Equipment set EquStatus='", service.sMS, "' WHERE EquNum='", service.EquNum, "'" }));
+                                DBHelper.ExecuteNonQuery(string.Concat(new object[] { "update Equipment set ReviewTime='", DBHelper.GetDate(), "' WHERE EquNum='", service.EquNum, "'" }));
+                                if (retValues.LeftTime <= 500M && retValues.LeftTime > 200M)
+                                {
+                                    DBHelper.UpEquIsSend(service.EquNum, "0,0,0,0");
+                                }
+                                else if (retValues.LeftTime <= 200M && retValues.LeftTime > 100M)
+                                {
+                                    DBHelper.UpEquIsSend(service.EquNum, "1,0,0,0");
+                                }
+                                else
+                                {
+                                    DBHelper.UpEquIsSend(service.EquNum, "1,1,0,0");
+                                }
+                                service.GetJson(retValues);
+                                return;
+                            }
+
+                        case "N":
+                            if (service.IsDelay == "2")
+                            {
+
+                                retValues.LeftTime = service.ReMaTime;
+                                retValues.Operating = "Normal";
+                                retValues.ServerTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                                retValues.Status = "Success";
+                                Equstatus.sTM = Convert.ToInt32(service.ReMaTime).ToString();
+                                //DBHelper.Add(Equstatus);
+                                DBHelper.ExecuteNonQuery(string.Concat(new string[] { "update Equipment set EquStatus='", service.sMS, "' WHERE EquNum='", service.EquNum, "'" }));
+                                DBHelper.ExecuteNonQuery(string.Concat(new object[] { "update Equipment set ReviewTime='", DBHelper.GetDate(), "' WHERE EquNum='", service.EquNum, "'" }));
+                                DBHelper.ExecuteNonQuery("update Equipment set  IsDelay='0" + "'  where EquNum='" + service.EquNum + "'");
+                                service.GetJson(retValues);
+                                return;
+                            }
+                            if (service.ReMaTime >= service.ClientTime)//正常情况
+                            {
+                                retValues.Operating = "Normal";
+                                retValues.Status = IsActive("Success");
+                                retValues.ServerTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                                retValues.LeftTime = service.ClientTime;
+                                Equstatus.sTM = Convert.ToInt32(retValues.LeftTime).ToString();
+                                DBHelper.Add(Equstatus);
+                                DBHelper.UpdateEquTime(service.EquNum, retValues.LeftTime);
+                                DBHelper.ExecuteNonQuery(string.Concat(new string[] { "update Equipment set EquStatus='", service.sMS, "' WHERE EquNum='", service.EquNum, "'" }));
+                                DBHelper.ExecuteNonQuery(string.Concat(new object[] { "update Equipment set ReviewTime='", DBHelper.GetDate(), "' WHERE EquNum='", service.EquNum, "'" }));
+                                service.GetJson(retValues);
+                                return;
+                            }
+                            else//如果客户端时长>服务端时长
+                            {
+                                retValues.Operating = "Normal";
+                                retValues.Status = IsActive("Success");
+                                retValues.ServerTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                                retValues.LeftTime = service.ClientTime;//返回客户端的时长
+                                DBHelper.Add(Equstatus);
+                                //DBHelper.UpdateEquTime(service.EquNum, service.ReMaTime);
+                                DBHelper.ExecuteNonQuery(string.Concat(new string[] { "update Equipment set EquStatus='", service.sMS, "' WHERE EquNum='", service.EquNum, "'" }));
+                                DBHelper.ExecuteNonQuery(string.Concat(new object[] { "update Equipment set ReviewTime='", DBHelper.GetDate(), "' WHERE EquNum='", service.EquNum, "'" }));
+                                service.GetJson(retValues);
+                                return;
+                            }
+
+
+                        default:
+                            retValues.Operating = "UnKnow";
+                            DBHelper.Add(Equstatus);
+                            DBHelper.ExecuteNonQuery(string.Concat(new string[] { "update Equipment set EquStatus='", service.sMS, "' WHERE EquNum='", service.EquNum, "'" }));
+                            DBHelper.ExecuteNonQuery(string.Concat(new object[] { "update Equipment set ReviewTime='", DBHelper.GetDate(), "' WHERE EquNum='", service.EquNum, "'" }));
+                            break;
+                    }
+                }
+                else
+                {
+                    retValues.Operating = "Please Leave This Page!";
+                    retValues.ServerTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+                    retValues.LeftTime = Decimal.Zero;
+                    retValues.Status = "Failure";
+                    service.GetJson(retValues);
+                    return;
+                }
+
             }
             else
             {
-                retValues.Status = "failure";
-                retValues.Operating = "Normal";
+                //this.GetJson();
+                //return;
+                retValues.Status = "Failure";
+                retValues.Operating = "Please Leave This Page!";
                 retValues.ServerTime = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
-                retValues.LeftTime = 0M;
+                retValues.LeftTime = Decimal.Zero;
+                service.GetJson(retValues);
+                return;
             }
-           
-            this.GetJson(retValues);      
+
         }
+
     }
 }
 

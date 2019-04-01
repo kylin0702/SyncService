@@ -12,13 +12,16 @@
 
     public class DBHelper
     {
+        
+        
         public static string conn = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["conn"].ToString();
+        #region 光源信息存储到数据库
         /// <summary>
         /// 增加机器状态表数据
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static int Add(EquStatus model)
+        public static void Add(EquStatus model)
         {
             StringBuilder builder = new StringBuilder();
             StringBuilder builder2 = new StringBuilder();
@@ -483,138 +486,55 @@
                 builder2.Append("sTMP6,");
                 builder3.Append("'" + model.sTMP6 + "',");
             }
-            if (model.sSRC1 != null)
+            if (model.sSCR1 != null)
             {
-                builder2.Append("sSRC1,");
-                builder3.Append("'" + model.sSRC1 + "',");
+                builder2.Append("sSCR1,");
+                builder3.Append("'" + model.sSCR1 + "',");
             }
-            if (model.sSRC2 != null)
+            if (model.sSCR2 != null)
             {
-                builder2.Append("sSRC2,");
-                builder3.Append("'" + model.sSRC2 + "',");
+                builder2.Append("sSCR2,");
+                builder3.Append("'" + model.sSCR2 + "',");
             }
-            if (model.sSRC3 != null)
+            if (model.sSCR3 != null)
             {
-                builder2.Append("sSRC3,");
-                builder3.Append("'" + model.sSRC3 + "',");
+                builder2.Append("sSCR3,");
+                builder3.Append("'" + model.sSCR3 + "',");
             }
-            if (model.sSRC4 != null)
+            if (model.sSCR4 != null)
             {
-                builder2.Append("sSRC4,");
-                builder3.Append("'" + model.sSRC4 + "',");
+                builder2.Append("sSCR4,");
+                builder3.Append("'" + model.sSCR4 + "',");
             }
-            if (model.sSRC5 != null)
+            if (model.sSCR5 != null)
             {
-                builder2.Append("sSRC5,");
-                builder3.Append("'" + model.sSRC5 + "',");
+                builder2.Append("sSCR5,");
+                builder3.Append("'" + model.sSCR5 + "',");
             }
-            if (model.sSRC6 != null)
+            if (model.sSCR6 != null)
             {
-                builder2.Append("sSRC6,");
-                builder3.Append("'" + model.sSRC6+ "',");
+                builder2.Append("sSCR6,");
+                builder3.Append("'" + model.sSCR6 + "',");
             }
-            if (model.sSRC7 != null)
+            if (model.sSCR7 != null)
             {
-                builder2.Append("sSRC7,");
-                builder3.Append("'" + model.sSRC7 + "',");
+                builder2.Append("sSCR7,");
+                builder3.Append("'" + model.sSCR7 + "',");
             }
-            if (model.sSRC8 != null)
+            if (model.sSCR8 != null)
             {
-                builder2.Append("sSRC8,");
-                builder3.Append("'" + model.sSRC8 + "',");
+                builder2.Append("sSCR8");
+                builder3.Append("'" + model.sSCR8 + "'");
             }
             builder.Append("insert into EquStatus(");
-            builder.Append(builder2.ToString().Remove(builder2.Length - 1));
+            builder.Append(builder2.ToString());
             builder.Append(")");
             builder.Append(" values (");
-            builder.Append(builder3.ToString().Remove(builder3.Length - 1));
+            builder.Append(builder3.ToString());
             builder.Append(")");
-            builder.Append(";select @@IDENTITY");
-            return ExecuteScalar(builder.ToString());
+            ExecuteNonQuery(builder.ToString());
         }
-
-        public static bool AddAbnorma(Abnorma model)
-        {
-            StringBuilder builder = new StringBuilder();
-            builder.Append("insert into Abnorma(");
-            builder.Append("ClientID,EquID,ProDesc,Livephotos,MainteDesc,Livephotos2,Remark,Serious,Solve,AbSta,UpdateTime");
-            builder.Append(")");
-            builder.Append(" values (");
-            builder.Append(model.ClientID + ",");
-            builder.Append(model.EquID + ",");
-            builder.Append("'" + model.ProDesc + "',");
-            builder.Append(model.Livephotos + ",");
-            builder.Append("'" + model.MainteDesc + "',");
-            builder.Append("'" + model.Livephotos2 + "',");
-            builder.Append("'" + model.Remark + "',");
-            builder.Append("'" + model.Serious + "',");
-            builder.Append("'" + model.Solve + "',");
-            builder.Append("'" + model.AbSta + "',");
-            builder.Append("'" + model.UpdateTime + "'");
-            builder.Append(")");
-            builder.Append(";select @@IDENTITY");
-            return (ExecuteNonQuery(builder.ToString()) >= 1);
-        }
-
-        public static int AddUpDown(UpAndDown model)
-        {
-            StringBuilder builder = new StringBuilder();
-            StringBuilder builder2 = new StringBuilder();
-            StringBuilder builder3 = new StringBuilder();
-            if (model.EquStaID.HasValue)
-            {
-                builder2.Append("EquStaID,");
-                builder3.Append(model.EquStaID + ",");
-            }
-            if (model.EquNum != null)
-            {
-                builder2.Append("EquNum,");
-                builder3.Append("'" + model.EquNum + "',");
-            }
-            if (model.IpAds != null)
-            {
-                builder2.Append("IpAds,");
-                builder3.Append("'" + model.IpAds + "',");
-            }
-            if (model.TheTime.HasValue)
-            {
-                builder2.Append("TheTime,");
-                builder3.Append(model.TheTime + ",");
-            }
-            if (model.UpTime.HasValue)
-            {
-                builder2.Append("UpTime,");
-                builder3.Append(model.UpTime + ",");
-            }
-            if (model.Date.HasValue)
-            {
-                builder2.Append("Date,");
-                builder3.Append("'" + model.Date + "',");
-            }
-            if (model.Rest != null)
-            {
-                builder2.Append("Rest,");
-                builder3.Append("'" + model.Rest + "',");
-            }
-            if (model.UseAmount.HasValue)
-            {
-                builder2.Append("UseAmount,");
-                builder3.Append("'" + model.UseAmount + "',");
-            }
-            if (model.Sta != null)
-            {
-                builder2.Append("Sta,");
-                builder3.Append("'" + model.Sta + "',");
-            }
-            builder.Append("insert into UpAndDown(");
-            builder.Append(builder2.ToString().Remove(builder2.Length - 1));
-            builder.Append(")");
-            builder.Append(" values (");
-            builder.Append(builder3.ToString().Remove(builder3.Length - 1));
-            builder.Append(")");
-            return ExecuteNonQuery(builder.ToString());
-        }
-
+        #endregion
         public static int ExecuteNonQuery(string sql)
         {
             int num;
@@ -632,40 +552,6 @@
             }
             return num;
         }
-       //返回主键 by wyb 2018-6-26
-        public static int ExecuteScalar(string sql)
-        {
-            int num;
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(conn))
-                {
-                    connection.Open();
-                    num =  Convert.ToInt32(new SqlCommand(sql, connection).ExecuteScalar());
-                }
-            }
-            catch
-            {
-                num = 0;
-            }
-            return num;
-        }
-
-        public static int GetAddID()
-        {
-            string sql = "select max(ID) from EquStatus";
-            DataSet dataSet = GetDataSet(sql);
-            if (dataSet.Tables[0].Rows.Count >= 1)
-            {
-                string str2 = dataSet.Tables[0].Rows[0][0].ToString();
-                if (!string.IsNullOrWhiteSpace(str2))
-                {
-                    return Convert.ToInt32(str2);
-                }
-            }
-            return 0;
-        }
-
         public static DataSet GetClientAnID(string EquNUm)
         {
             return GetDataSet("select ID,ClientID from Equipment where EquNum='" + EquNUm + "'");
@@ -674,7 +560,7 @@
         private static string GetContentFromUrll(string _requestUrl)
         {
             string str = "";
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(_requestUrl);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_requestUrl);
             request.Method = "GET";
             WebResponse response = request.GetResponse();
             StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding("utf-8"));
@@ -709,29 +595,6 @@
             return currentTime;
         }
 
-        public static string GetDtCount(string EquNUm)
-        {
-            string sql = "select ID from Equipment where EquNum='" + EquNUm + "' and EquStatus!='UnActive' ";
-            DataSet dataSet1 = GetDataSet(sql);
-            if ((dataSet1 == null) || (dataSet1.Tables[0].Rows.Count != 1))//如果光源不在系统里或者光源编号重复
-            {
-                return "1";
-            }
-            else
-            {
-                //如果sERR的本次和上一次不一样，写入异常表
-                DataSet dataSet2 = GetDataSet("select top 2 sERR from Equstatus where sNU='" + EquNUm + "' order by ID desc");
-                if (dataSet2.Tables[0].Rows[0]["sERR"].ToString()== dataSet2.Tables[0].Rows[1]["sERR"].ToString())
-                {
-                    return "1";
-                }
-                else
-                {
-                    return "0";
-                }
-            }
-         
-        }
 
         public static string GetHostAddress()
         {
@@ -747,273 +610,6 @@
             return "127.0.0.1";
         }
 
-        public static string GetIsEnabled(string EquNUm)
-        {
-            DataSet dataSet = GetDataSet("select IsEnabled from Equipment WHERE EquNum='" + EquNUm + "'");
-            if (dataSet.Tables[0].Rows.Count >= 1)
-            {
-                string str2 = dataSet.Tables[0].Rows[0][0].ToString();
-                if (!string.IsNullOrWhiteSpace(str2))
-                {
-                    return str2;
-                }
-            }
-            return "Y";
-        }
-
-        public static decimal GetReMaTime(string EquNUm)
-        {
-            DataSet dataSet = GetDataSet("select *, (GiftTime+RemainTime) ReMaTime from Equipment WHERE EquNum='" + EquNUm + "'");
-            if (dataSet.Tables[0].Rows.Count >= 1)
-            {
-                string str2 = dataSet.Tables[0].Rows[0]["ReMaTime"].ToString();
-                if (!string.IsNullOrWhiteSpace(str2))
-                {
-                    return Convert.ToDecimal(Math.Round(Convert.ToDecimal(str2), 0).ToString());
-                }
-            }
-            return 0M;
-        }
-
-        public static bool GetReMaTime(string EquNUm, decimal UseTime, string sMSs,string sTM)
-        {
-            if (!IsEuqNum(EquNUm))//EquNUm 光源编号，UseTime 使用时间，sMSs 机器状态
-            {
-                return false;
-            }
-            string sql = "select *, (GiftTime+RemainTime) ReMaTime from Equipment WHERE EquNum='" + EquNUm + "'";
-            string str2 = "";
-            string str4 = "";
-            DataSet dataSet = GetDataSet(sql);
-            if (dataSet.Tables[0].Rows.Count >= 1)
-            {
-                string str5 = dataSet.Tables[0].Rows[0]["ReMaTime"].ToString();
-                string str6 = dataSet.Tables[0].Rows[0]["GiftTime"].ToString();
-                string str7 = dataSet.Tables[0].Rows[0]["IsPre"].ToString();
-                //EquNUm 光源编号，
-                //UseTime 使用时间，
-                //sMSs 机器状态
-                //num 赠送时长
-                //num2 总时长
-                decimal num = Convert.ToDecimal(str6);
-                decimal num2 = Convert.ToDecimal(str5);
-                if (num <= 0M)//如果赠送时长小于等于0小时，剩余时长的充值时长-使用时长
-                {
-                    str2 = string.Concat(new object[] { "update Equipment set RemainTime=RemainTime-", UseTime, " where EquNum='", EquNUm, "'" });
-                }
-                /*else if (UseTime > num)//如果使用时长大于赠送时长，剩余时长=充值时长-（使用时长-赠送时长）
-                {
-                    decimal num3 = UseTime - num;
-                    str2 = string.Concat(new object[] { "update Equipment  mainTime=RemainTime-", num3, ",GiftTime=0 where EquNum='", EquNUm, "'" });
-                }
-                else//否则赠送时长=赠送时长-使用时长
-                {
-                    str2 = string.Concat(new object[] { "update Equipment set GiftTime=GiftTime-", UseTime, " where EquNum='", EquNUm, "'" });
-                }*/
-                if (UseTime > num2)//如果使用时长大于剩余时长，不执行操作
-                {
-                    str2 = "";
-                }
-                if (sMSs == "UnActive")//如果机器未激活，不执行操作
-                {
-                    str2 = "";
-                }
-                /*if (IsBuys(EquNUm))//如果光源已购买，不执行操作
-                {
-                    str2 = "";
-                }*/
-                if (str7 == "S")//如果光源已经结算，不执行操作
-                {
-                    str2 = "";
-                }
-                string str8 = IsDelay(EquNUm);//光源充值操作状态
-                if (str8 != "0")//如果光源未充值
-                {
-                    switch (str8)
-                    {
-                        case "2"://2次（充值赠送操作）
-                           
-                            str8 = "1";
-                            break;
-
-                        case "1"://1次充值或赠送操作
-                            str8 = "0";
-                            break;
-
-                        case "0":
-                            break;
-
-                        default:
-                            str8 = "0";
-                            break;
-                    }
-                
-                    ExecuteNonQuery("update Equipment set  IsDelay='" + str8 + "'  where EquNum='" + EquNUm + "'");
-
-                    str2 = "";
-                }
-                 if (((str7 == "Y") || (str7 == "G")) || (str7 == "F"))
-                //if (str7 == "Y"&&str8=="0")   //by wyb 只用Y表示充值,str8为delay
-                {
-                   
-                    string str10 = "RemainTime=RemainTime";       
-                    string str12 = str7;
-                    if (str12 != null)
-                    {
-                        if (str12 == "Y")
-                        {
-                            if (GetReMaTime(EquNUm) >= decimal.Parse(sTM)){
-                                str10 = "RemainTime=("+ sTM + "+Precharge)";// Y 充值操作
-
-                            }
-                            else
-                            {
-                                str10 = "RemainTime=(RemainTime+Precharge)";// Y 充值操作
-                            }
-                          
-                        }
-                        else if (str12 == "G")
-                        {
-                            str10 = "GiftTime=(GiftTime+PreGift)";//G 赠送操作
-                        }
-                        else if (str12 == "F")
-                        {
-                            str10 = "RemainTime=(RemainTime+Precharge),GiftTime=(GiftTime+PreGift)";//既有充值也有赠送
-                        }
-                    }
-                    //str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N', IsDelay='2' where EquNum='" + EquNUm + "' and RemainTime is not null";
-                   
-                    str4 = "update Equipment Set " + str10 + ",Precharge='0',PreGift='0',Ispre='N' where EquNum='" + EquNUm + "' and RemainTime is not null";//by wyb 2018-12-29 在管理系统直接更新IsDelay值
-                    int num4 = 0;
-                    if (GetIsEnabled(EquNUm) == "Y")
-                    {
-                        num4 = ExecuteNonQuery(str4);
-                        decimal RemainTime_Updated = GetReMaTime(EquNUm);
-                        string isend_val = "";//余额不足发送短信值 
-                        if (RemainTime_Updated >= 500)
-                        {
-                            isend_val = "0,0,0,0";
-
-                        }
-                        else if (RemainTime_Updated < 500 & RemainTime_Updated >= 200)
-                        {
-                            isend_val = "1,0,0,0";
-
-                        }
-                        else if (RemainTime_Updated < 200 & RemainTime_Updated >= 100)
-                        {
-                            isend_val = "1,1,0,0";
-                        }
-                        else
-                        {
-                            isend_val = "1,1,1,1";
-                        }
-                        //更新短信标志
-                        ExecuteNonQuery("update Equipment Set IsSend='" + isend_val + "' where EquNum='" + EquNUm + "' and RemainTime is not null");
-                    }
-                }
-            }
-            ExecuteNonQuery("update Equipment set EquStatus='" + sMSs + "' WHERE EquNum='" + EquNUm + "'");
-            ExecuteNonQuery("update Equipment set ReviewTime='" + GetDate() + "' WHERE EquNum='" + EquNUm + "'");
-            if (str2 == "")
-            {
-                return false;
-            }
-            return (ExecuteNonQuery(str2) >= 1);
-        }
-
-        public static decimal GetReMaTimes(string EquNUm)
-        {
-            DataSet dataSet = GetDataSet("select *, (GiftTime+RemainTime+Precharge+PreGift) ReMaTime from Equipment WHERE EquNum='" + EquNUm + "'");
-            if (dataSet.Tables[0].Rows.Count >= 1)
-            {
-                string str2 = dataSet.Tables[0].Rows[0]["ReMaTime"].ToString();
-                if (!string.IsNullOrWhiteSpace(str2))
-                {
-                    return Convert.ToDecimal(Math.Round(Convert.ToDecimal(str2), 0).ToString());
-                }
-            }
-            return 0M;
-        }
-
-        public static decimal GetReTime(string EquNUm, decimal UseTime)
-        {
-            DataSet dataSet = GetDataSet(string.Concat(new object[] { "select *, (GiftTime+RemainTime-", UseTime, ") ReMaTime from Equipment WHERE EquNum='", EquNUm, "'" }));
-            if (dataSet.Tables[0].Rows.Count >= 1)
-            {
-                string str2 = dataSet.Tables[0].Rows[0]["ReMaTime"].ToString();
-                if (!string.IsNullOrWhiteSpace(str2))
-                {
-                    return Convert.ToDecimal(str2);
-                }
-            }
-            return 0M;
-        }
-
-        public static decimal GetUpTime(string EquNUm)
-        {
-            DataSet dataSet = GetDataSet("select UpTime from  UpAndDown where EquNum ='" + EquNUm + "' ORDER BY ID DESC");
-            if (dataSet.Tables[0].Rows.Count >= 1)
-            {
-                string str2 = dataSet.Tables[0].Rows[0][0].ToString();
-                if (!string.IsNullOrWhiteSpace(str2))
-                {
-                    return Convert.ToDecimal(str2);
-                }
-            }
-            return 0M;
-        }
-
-        public static decimal GetUseAmout(string EquNUm, decimal LtsTM)
-        {
-            DataSet dataSet = GetDataSet("select EquTypeID,GiftTime from Equipment where EquNum='" + EquNUm + "'");
-            string str2 = "0";
-            decimal num = 0M;
-            decimal num2 = LtsTM;
-            if (dataSet.Tables[0].Rows.Count >= 1)
-            {
-                str2 = dataSet.Tables[0].Rows[0]["EquTypeID"].ToString();
-                num = Convert.ToDecimal(dataSet.Tables[0].Rows[0]["GiftTime"].ToString());
-                if (num >= LtsTM)
-                {
-                    num2 = 0M;
-                }
-                else if (num == 0M)
-                {
-                    num2 = LtsTM;
-                }
-                else
-                {
-                    num2 = LtsTM - num;
-                }
-            }
-            DataSet set2 = GetDataSet("select Price from EquType where ID='" + str2 + "'");
-            if (set2.Tables[0].Rows.Count >= 1)
-            {
-                return (Convert.ToDecimal(set2.Tables[0].Rows[0][0].ToString()) * num2);
-            }
-            return 0M;
-        }
-
-        public static bool IsBuys(string EquNum)
-        {
-            DataSet dataSet = GetDataSet("select ISBuy from Equipment where EquNum='" + EquNum + "'");
-            if (dataSet.Tables[0].Rows.Count < 1)
-            {
-                return false;
-            }
-            return (dataSet.Tables[0].Rows[0][0].ToString() == "是");
-        }
-
-        public static string IsDelay(string EquNum)
-        {
-            DataSet dataSet = GetDataSet("select IsDelay from Equipment where EquNum='" + EquNum + "'");
-            if (dataSet.Tables[0].Rows.Count >= 1)
-            {
-                return dataSet.Tables[0].Rows[0][0].ToString();
-            }
-            return "0";
-        }
 
         public static bool IsEuqNum(string EquNum)
         {
@@ -1028,42 +624,21 @@
             }
             return true;
         }
-
+        #region 光源充值后重置充值时长以及IsPre字段
+        /// <summary>
+        /// 光源充值后重置充值时长以及IsPre字段
+        /// </summary>
+        /// <returns>如果成功返回true</returns>
+        public static void UpdateEquTime(string EquNum, Decimal ReMaTime)
+        {
+            string sql = "update Equipment set Precharge=0,IsPre='N'," + "RemainTime =" + ReMaTime + " where EquNum = '" + EquNum + "'";
+            ExecuteNonQuery(sql);
+        }
+        #endregion
         public static bool IsIP(string ip)
         {
             return Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
         }
-
-        public static string IsPrest(string EquNum)
-        {
-            string str = "N";
-            DataSet dataSet = GetDataSet("select IsPre from Equipment WHERE EquNum='" + EquNum + "'");
-            if (dataSet.Tables[0].Rows.Count >= 1)
-            {
-                str = dataSet.Tables[0].Rows[0]["IsPre"].ToString();
-            }
-            return str;
-        }
-
-        public static bool IsSets(string EquNum)
-        {
-            DataSet dataSet = GetDataSet("select COUNT(*) from Equipment WHERE IsPre='S' AND  EquNum='" + EquNum + "'");
-            if (dataSet.Tables[0].Rows.Count < 1)
-            {
-                return false;
-            }
-            string str2 = dataSet.Tables[0].Rows[0][0].ToString();
-            if (string.IsNullOrWhiteSpace(str2))
-            {
-                return false;
-            }
-            if (str2 == "0")
-            {
-                return false;
-            }
-            return true;
-        }
-
         public static void SendMsg(string who, string what, string how, string Phone, string sta)
         {
             string str = Phone;
@@ -1084,60 +659,92 @@
             {
                 try
                 {
-                    GetContentFromUrll(" http://61.143.63.169:8080/Services.asmx/DirectSend?UserID=999595&Account=admin&Password=FW9NQ9&Phones=" + str + ";&Content=" + str2 + "&SendTime=&SendType=1&PostFixNumber=");
+                    GetContentFromUrll(" http://61.143.63.169:8080/GateWay/Services.asmx/DirectSend?UserID=999595&Account=admin&Password=FW9NQ9&Phones=" + str + ";&Content=" + str2 + "&SendTime=&SendType=1&PostFixNumber=");
                 }
                 catch
                 {
                 }
             }
         }
-
-        public static DataSet SetClientAndEqu3(string str)
-        {
-            return GetDataSet("select IsSend,ClientName,NumBer,(GiftTime+RemainTime) RemainTime,Phone,Agent,Seller,Engineer from Client,Equipment where Client.ID=Equipment.ClientID " + str);
-        }
-
         public static bool UpEquIsSend(string EquNum, string Sta)
         {
-            return (ExecuteNonQuery("Update Equipment set IsSend='" + Sta + "' where EquNum='" + EquNum + "'") >= 1);
+            string[] textArray1 = new string[] { "Update Equipment set IsSend='", Sta, "' where EquNum='", EquNum, "'" };
+            return (ExecuteNonQuery(string.Concat(textArray1)) >= 1);
         }
-
-        public static int UpSets(string EquNum)
+        #region 通过光源编号查看光源是否锁定
+        /// <summary>
+        /// 光源是否锁定
+        /// </summary>
+        /// <param name="EquNum">光源编号</param>
+        /// <returns>加入锁定返回true</returns>
+        public static bool IsLocked(string EquNum)
         {
-            /*UpAndDown model = new UpAndDown {
-                EquStaID = new int?(GetAddID()),
-                EquNum = EquNum,
-                IpAds = GetHostAddress(),
-                TheTime = new decimal?(GetReMaTimes(EquNum)),
-                UpTime = 0,
-                Date = new DateTime?(GetDate()),
-                Rest = "成功",
-                Sta = "Settlement"
-            };
-            AddUpDown(model);*/
-            return ExecuteNonQuery("update Equipment set IsPre='N',Precharge='0',PreGift='0',GiftTime='0',RemainTime='0'  WHERE  EquNum='" + EquNum + "'");
-        }
-
-        public static string IPAddress
-        {
-            get
+            DataSet ds = GetDataSet("select IsEnabled from Equipment where EquNum ='" + EquNum + "'");
+            if (ds.Tables[0].Rows.Count >= 1)
             {
-                string str;
-                HttpRequest request = HttpContext.Current.Request;
-                if (request.ServerVariables["HTTP_X_FORWARDED_FOR"] != "")
+                if (ds.Tables[0].Rows[0]["IsEnabled"].ToString() == "N")
                 {
-                    str = request.ServerVariables["REMOTE_ADDR"];
+                    return true;
                 }
-                else
-                {
-                    str = request.ServerVariables["HTTP_X_FORWARDED_FOR"];
-                }
-                if ((str != null) && (str != ""))
-                {
-                    return str;
-                }
-                return request.UserHostAddress;
             }
+            return false;
+        }
+        #endregion
+        public static DataSet GetEquInfo(string equnum)
+        {
+            DataSet ds = GetDataSet("select *,Equipment.ID as EquID from Equipment inner join Client on(Equipment.ClientID=Client.ID) where EquNum = '" + equnum + "'");
+            return ds;
+        }
+        /// <summary>
+        /// 光源结算
+        /// </summary>
+        /// <param name="EquNum"></param>
+        /// <returns></returns>
+        //public static int UpSets(string EquNum)
+        //{
+        //    UpAndDown model = new UpAndDown {
+        //        EquStaID = new int?(GetAddID()),
+        //        EquNum = EquNum,
+        //        IpAds = GetHostAddress(),
+        //        TheTime = new decimal?(GetReMaTimes(EquNum)),
+        //        UpTime = 0,
+        //        Date = new DateTime?(GetDate()),
+        //        Rest = "成功",
+        //        Sta = "Settlement"
+        //    };
+        //    AddUpDown(model);
+        //    return ExecuteNonQuery("update Equipment set IsPre='N',Precharge='0',PreGift='0',GiftTime='0',RemainTime='0'  WHERE  EquNum='" + EquNum + "'");
+        //}
+        public static string GetDtCount(string EquID)
+        {
+            DataSet ds = GetDataSet("select top 1 ProDesc from Abnorma where EquID='" + EquID + "' order by ID desc");
+            if(ds.Tables[0].Rows.Count>0)
+            {
+                return ds.Tables[0].Rows[0][0].ToString();
+            }
+            return "00";
+        }
+        public static bool AddAbnorma(Abnorma model)
+        {
+            StringBuilder builder1 = new StringBuilder();
+            builder1.Append("insert into Abnorma(");
+            builder1.Append("ClientID,EquID,ProDesc,Livephotos,MainteDesc,Livephotos2,Remark,Serious,Solve,AbSta,UpdateTime");
+            builder1.Append(")");
+            builder1.Append(" values (");
+            builder1.Append(model.ClientID + ",");
+            builder1.Append(model.EquID + ",");
+            builder1.Append("'" + model.ProDesc + "',");
+            builder1.Append(model.Livephotos + ",");
+            builder1.Append("'" + model.MainteDesc + "',");
+            builder1.Append("'" + model.Livephotos2 + "',");
+            builder1.Append("'" + model.Remark + "',");
+            builder1.Append("'" + model.Serious + "',");
+            builder1.Append("'" + model.Solve + "',");
+            builder1.Append("'" + model.AbSta + "',");
+            builder1.Append("'" + model.UpdateTime + "'");
+            builder1.Append(")");
+            builder1.Append(";select @@IDENTITY");
+            return (ExecuteNonQuery(builder1.ToString()) >= 1);
         }
     }
 }
